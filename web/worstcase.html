@@ -1,0 +1,80 @@
+---
+# front matter tells Jekyll to process Liquid
+---
+<!DOCTYPE html>
+<html class=" js no-touch svg inlinesvg svgclippaths no-ie8compat" style="">
+	{% include head.html %}
+	<body class="homepage homepage_index">
+		{% include header.html %}
+		<main class="content container" role="main">
+			<div class="content-row">
+				{% include nav.html %}
+				<article class="inner-content">
+					<div class="inner-content">
+						<h1 id="the-chair-of-br-network-architectures-and-services">Figure 4</h1>
+
+						<h5>DPDK-l2fwd (HW)</h5>
+						<p><img src="{{site.url}}/figures/dpdk-l2fwd/hw/pcap/latencies-pre-rate10000-dpdk-l2fwd.pcap.worst-filtered.pdf.svg" style="display:block;margin-left:auto;margin-right:auto;width=90%;" alt="low-latency/figures/dpdk-l2fwd/hw/pcap/latencies-pre-rate10000-snort-filter.pcap.worst-filtered.pdf.svg"/></p>
+						<h5>DPDK-l2fwd (simulated)</h5>
+						<p><img src="{{site.url}}/figures/dpdk-l2fwd/hw/simulation/simulation.pdf.svg" style="display:block;margin-left:auto;margin-right:auto;width=90%;" alt="low-latency/figures/dpdk-l2fwd/hw/simulation/simulation.pdf.svg"/></p>
+						<h5>DPDK-l2fwd (VM)</h5>
+						<p><img src="{{site.url}}/figures/dpdk-l2fwd/vm/pcap/latencies-pre-rate10000-dpdk-l2fwd.pcap.worst-filtered.pdf.svg" style="display:block;margin-left:auto;margin-right:auto;width=90%;" alt="low-latency/figures/dpdk-l2fwd/vm/pcap/latencies-pre-rate10000-snort-filter.pcap.worst-filtered.pdf.svg"/></p>
+
+
+						<h2 style="margin: 30px 0 15px 0;">Steps to reproduce measurements</h2>
+
+						<p>The setup and experiment execution for the worst-case measurements of DPDK-l2fwd (HW/VM) evaluation is part of the description for <a href="{{site.url}}/table.html">Table II</a>. </p>
+
+						<h2 style="margin: 30px 0 15px 0;">Steps to reproduce figures</h2>
+						<h3>Raw data</h3>
+						<p>Pcaps (<a href="https://github.com/gallenmu/low-latency/tree/master/measurements/dpdk-l2fwd/hw/pcap">DPDK-l2fwd (HW)</a>, <a href="https://github.com/gallenmu/low-latency/tree/master/measurements/dpdk-l2fwd/vm/pcap">DPDK-l2fwd (VM)</a>)</p>
+
+						<h3>Evaluation execution</h3>
+						<p><details>
+							<summary>Setup evaluator</summary>
+							{% include evaluator_setup.html %}
+						</details>
+						<details>
+							<summary>Generate figures</summary>
+							<p><pre><code>git clone https://github.com/gallenmu/low-latency /root/low-latency
+
+#decompress pcaps
+cd /root/low-latency/measurements
+for i in $(find . -iname *.zst); do zstd --rm -d $i; done;
+
+#create hw figure
+export MPATH=dpdk-l2fwd
+cd /root/low-latency/figures/$MPATH/hw/pcap
+su postgres -c "createuser -s root"
+dropdb --if-exists root
+createdb root
+export PGDATABASE=root
+for i in /root/low-latency/measurements/$MPATH/hw/pcap/*-pre-rate10000-*.pcap; do /root/low-latency/scripts/pcap-import.sh $i; /root/low-latency/scripts/pcap-analysis.sh $i; done;
+python3 /root/low-latency/scripts/pcap-tex-create.py .
+for i in *.tex; do lualatex $i; done
+
+#create simulation
+cd /root/low-latency/figures/$MPATH/hw/simulation
+python3 /root/scripts/interrupt-sim.py
+lualatex simulation.tex
+
+#create vm figure
+cd /root/low-latency/figures/$MPATH/vm/pcap
+su postgres -c "createuser -s root"
+dropdb --if-exists root
+createdb root
+export PGDATABASE=root
+for i in /root/low-latency/measurements/$MPATH/vm/pcap/*-pre-rate10000-*.pcap; do /root/low-latency/scripts/pcap-import.sh $i; /root/low-latency/scripts/pcap-analysis.sh $i; done;
+python3 /root/low-latency/scripts/pcap-tex-create.py .
+for i in *.tex; do lualatex $i; done
+</code></pre></p>
+						</details></p>
+
+						<h3>Output</h3>
+						<p>The precompiled output files can be found in the respective subfolders of the <a href="https://github.com/gallenmu/low-latency/tree/master/figures/dpdk-l2fwd">repository</a>. The files are called latencies-pre-rate10000-dpdk-l2fwd.pcap.worst-filtered.pdf in their respective subfolders.</p>
+					</div>
+				</article>
+			</div>
+		</main>
+		{% include footer.html %}
+	</body></html>

@@ -1,0 +1,137 @@
+---
+# front matter tells Jekyll to process Liquid
+---
+<!DOCTYPE html>
+<html class=" js no-touch svg inlinesvg svgclippaths no-ie8compat" style="">
+	{% include head.html %}
+	<body class="homepage homepage_index">
+		{% include header.html %}
+		<main class="content container" role="main">
+			<div class="content-row">
+				{% include nav.html %}
+				<article class="inner-content">
+					<div class="inner-content">
+						<h1 id="the-chair-of-br-network-architectures-and-services">Table 1 / Figure 1</h1>
+						<p><img src="{{site.url}}/figures/motivation/pcap/all-filtered.pdf.svg" style="display:block;margin-left:auto;margin-right:auto;width=90%;" alt="low-latency/figures/motivation/pcap/all-filtered.pdf.svg"/></p>
+						<p><img src="{{site.url}}/figures/motivation/pcap/latencies-pre-rate10000-snort-norules.pcap.worst-filtered.pdf.svg" style="display:block;margin-left:auto;margin-right:auto;width=50%;"/></p>
+
+						<h2>Steps to reproduce measurements</h2>
+
+						<h3>Images</h3>
+						<p>Images used for testing</p>
+						<p>
+						<details>
+							<summary>Device under test, evaluator</summary>
+							{% include debian_buster_default.html %}
+						</details>
+						<details>
+							<summary>Loadgen, timestamper</summary>
+							{% include debian_stretch_default.html %}
+						</details>
+						</p>
+
+						<h3>Setup</h3>
+						<p>
+						<details>
+							<summary>Setup loadgen</summary>
+							{% include loadgen_setup.html %}
+						</details>
+						</p>
+
+						<p>
+						Setup device under test (DuT):
+						<div style="padding-left:16px;">
+						<details>
+							<summary>Boot VM host parameter</summary>
+							{% include vm_host_bootparam.html %}
+						</details>
+						<details>
+							<summary>Setup VM host</summary>
+							{% include setup_vm_host.html %}
+						</details>
+						<details>
+							<summary>Boot VM parameter</summary>
+							{% include vm_bootparam.html %}
+						</details>
+						<details>
+							<summary>VM dependencies</summary>
+							{% include vm_dependencies.html %}
+						</details>
+						<details>
+							<summary>Setup Snort on DuT</summary>
+							{% include setup_snort.html %}
+						</details>
+						</p>
+						</div>
+
+						<p>
+						<details>
+							<summary>Setup timestamper</summary>
+							{% include timestamper_setup.html %}
+						</details>
+						</p>
+
+						<h3>Experiment execution</h3>
+						<p>1. Start Snort forwarder in the VM running on the DuT:
+						<details>
+							<summary>Start Snort</summary>
+							<p><pre><code>taskset -c 1 /opt/snort/bin/snort -c /root/low-latency/configs/snort/snort-norules.lua --daq-dir /usr/local/lib/daq --daq-dir /opt/snort/lib/daq --daq afpacket --daq-var fanout_type=hash --max-packet-threads 1 -Q -i ens3:ens4</pre></code></p>
+						</details>
+						</p>
+
+						<p>2. Wait until Snort is started, then start MoonGen on the LoadGen:
+						<details>
+							<summary>Start MoonGen</summary>
+							<p><pre><code>/root/moongen/build/MoonGen /root/moongen/examples/moonsniff/traffic-gen.lua --src-mac 52:54:00:8d:9d:ad --dst-mac 52:54:00:21:f8:29 --fix-packetrate 10000 --packets 300000 --warm-up 30 --l4-dst 53 --flows 10 --burst 1 1 0</pre></code></p>
+						</details>
+						</p>
+
+						<p>3. After Moongen on the LoadGen has started 1000 packets are sent to warm up the DuT. After that packet generation is paused for 30 seconds. In this pause MoonGen's packet sniffer on the timestamper should be started to record the actual measurement:
+						<details>
+							<summary>Start MoonGen</summary>
+							<p><pre><code>/root/moongen/build/MoonGen /root/moongen/examples/moonsniff/sniffer.lua 1 0 --capture --time 45 --snaplen 256</pre></code></p>
+						</details>
+						</p>
+
+						<p>4. The timestamper stops recording after 45 seconds and creates the two pcap files latencies-pre.pcap and latencies-post.pcap which can be used for evaluation.</p>
+
+						<h2>Steps to reproduce figures</h2>
+						<h3>Raw data</h3>
+						<p><a href="https://github.com/gallenmu/low-latency/tree/master/measurements/motivation/pcap">Pcaps</a></p>
+						<h3>Evaluation execution</h3>
+						<p>
+						<details>
+							<summary>Setup evaluator</summary>
+							{% include evaluator_setup.html %}
+						</details>
+
+						<details>
+							<summary>Generate figures</summary>
+							<p><pre><code>git clone https://github.com/gallenmu/low-latency
+
+#decompress pcaps
+cd low-latency/measurements
+for i in $(find . -iname *.zst); do zstd --rm -d $i; done;
+
+#create figures
+cd ../figures/motivation/pcap
+su postgres -c "createuser -s root"
+dropdb --if-exists root
+createdb root
+export PGDATABASE=root
+../../../scripts/pcap-import.sh ../../../measurements/motivation/pcap/latencies-pre-rate10000-snort-norules.pcap
+../../../scripts/pcap-analysis.sh ../../../measurements/motivation/pcap/latencies-pre-rate10000-snort-norules.pcap
+python3 ../../../scripts/pcap-tex-create.py .
+for i in *.tex; do lualatex $i; done
+							</code></pre></p>
+						</details>
+						</p>
+
+						<h3>Output</h3>
+						<p>The precompiled output files can be found in the <a href="https://github.com/gallenmu/low-latency/tree/master/figures/motivation">repository</a>. For this measurement all-filtered.pdf and latencies-pre-rate10000-snort-norules.pcap.worst-filtered.pdf were used.</p>
+					</div>
+				</article>
+			</div>
+		</main>
+		{% include footer.html %}
+	</body></html>
