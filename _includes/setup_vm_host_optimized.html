@@ -19,13 +19,14 @@ ip link set up dev eno8
 sysctl net.ipv6.conf.eno7.disable_ipv6=1
 sysctl net.ipv6.conf.eno8.disable_ipv6=1
 
-# configure VM
-virsh net-define net.xml
-virsh net-start net
-
 # download network config
 git clone https://github.com/gallenmu/low-latency /root/low-latency
 
+# mgmt interface of VM
+virsh net-define /root/low-latency/configs/vm/net.xml
+virsh net-start net
+
+# measurement interfaces of VM
 virsh net-define /root/low-latency/configs/vm/passthrough7.xml
 virsh net-define /root/low-latency/configs/vm/passthrough8.xml
 virsh net-start passthrough7
