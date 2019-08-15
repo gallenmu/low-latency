@@ -137,11 +137,11 @@
 						<p>3. After Moongen on the LoadGen has been started 1000 packets are sent to warm up the DuT. After that packet generation is paused for 30 seconds. In this pause MoonGen's packet sniffer on the timestamper should be started to record the actual measurement:
 						<details>
 							<summary>Start MoonGen</summary>
-							<p><pre><code>/root/moongen/build/MoonGen /root/moongen/examples/moonsniff/sniffer.lua 1 0 --capture --time 45 --snaplen 256</pre></code></p>
+							<p><pre><code>/root/moongen/build/MoonGen /root/moongen/examples/moonsniff/sniffer.lua 1 0 --capture --time 60 --snaplen 256</pre></code></p>
 						</details>
 						</p>
 
-						<p>4. The timestamper stops recording after 45 seconds and creates the two pcap files latencies-pre.pcap and latencies-post.pcap which can be used for evaluation.</p>
+						<p>4. The timestamper stops recording after 60 seconds and creates the two pcap files latencies-pre.pcap and latencies-post.pcap which can be used for evaluation.</p>
 
 						<h2 style="margin: 30px 0 15px 0;">Steps to reproduce figures</h2>
 						<h3>Raw data</h3>
