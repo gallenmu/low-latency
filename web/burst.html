@@ -103,7 +103,7 @@
 							<p><pre><code># $RATE is the number of generated packets per second
 # $PACKETS is the number of packets to be generated
 # $BURST amount of packets in a burst on the wire
-/root/moongen/build/MoonGen /root/moongen/examples/moonsniff/traffic-gen.lua --src-mac 52:54:00:8d:9d:ad --dst-mac 52:54:00:21:f8:29 --fix-packetrate  --packets $PACKETS --warm-up 30 --l4-dst 53 --flows 10 --burst $BURST 1 0</pre></code></p>
+/root/moongen/build/MoonGen /root/moongen/examples/moonsniff/traffic-gen.lua --src-mac 52:54:00:8d:9d:ad --dst-mac 52:54:00:21:f8:29 --fix-packetrate $RATE --packets $PACKETS --warm-up 30 --l4-dst 53 --flows 10 --burst $BURST 1 0</pre></code></p>
 						</details>
 						</p>
 
