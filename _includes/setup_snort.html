@@ -11,6 +11,9 @@ done
 # change outgoing mac to enable forwarding for SR-IOV
 arptables -A OUTPUT -o ens5 --h-length 6 -j mangle --mangle-mac-d '00:11:22:33:44:55'
 
+# download snort configs
+git clone https://github.com/gallenmu/low-latency /root/low-latency
+
 # build daq
 wget -q https://www.snort.org/downloads/snortplus/daq-2.2.2.tar.gz
 tar -xzf daq-2.2.2.tar.gz
