@@ -1,6 +1,7 @@
 <nav class="navigation">
 	<ul class="nav-list">
 		<li {% if page.url == "/" %}class="current_path current"{% endif %}><a href="{{ site.url }}/">Home</a></li>
+		<li {% if page.url == "/setup.html" %}class="current_path current"{% endif %}><a href="{{ site.url }}/web/setup.html">Hardware Setup</a></li>
 		<li {% if page.url == "/motivation.html" %}class="current_path current"{% endif %}><a href="{{ site.url }}/web/motivation.html">Table I / Figure 1</a></li>
 		<li {% if page.url == "/table.html" %}class="current_path current"{% endif %}><a href="{{ site.url }}/web/table.html">Table II</a></li>
 		<li {% if page.url == "/worstcase.html" %}class="current_path current"{% endif %}><a href="{{ site.url }}/web/worstcase.html">Figure 4</a></li>
