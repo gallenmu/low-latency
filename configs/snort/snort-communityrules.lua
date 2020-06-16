@@ -202,7 +202,7 @@ ips =
 
     -- use include for rules files; be sure to set your path
     -- note that rules files can include other rules files
-    include = '/root/measurement-script/config/snort3-community-rules/snort3-community.rules'
+    include = '/root/low-latency/configs/snort/snort3-community-rules/snort3-community.rules'
 }
 
 -- use these to configure additional rule actions
