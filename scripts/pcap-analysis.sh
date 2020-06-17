@@ -30,6 +30,7 @@ analysis() {
 	local bname="$(basename "$name")"
 
 	psql -q -X -v ON_ERROR_STOP=1 -v "name=$name" -f "$BASEDIR/sql/latency-hist.sql" > "${bname}.hist.csv"
+	psql -q -X -v ON_ERROR_STOP=1 -v "name=$name" -f "$BASEDIR/sql/latency-hist-filtered.sql" > "${bname}.hist-filtered.csv"
 	psql -q -X -v ON_ERROR_STOP=1 -v "name=$name" -f "$BASEDIR/sql/dump-worst.sql" > "${bname}.worst.csv"
 	psql -q -X -v ON_ERROR_STOP=1 -v "name=$name" -f "$BASEDIR/sql/dump-worst-filtered.sql" > "${bname}.worst-filtered.csv"
 	psql -q -X -v ON_ERROR_STOP=1 -v "name=$name" -f "$BASEDIR/sql/dump-percentiles.sql" > "${bname}.percentiles.csv"

@@ -13,10 +13,10 @@ args = parser.parse_args()
 histogram = Path(args.histogram)
 plot_folder = Path('.')
 
-histograms = list(histogram.glob('**/*.pcap.hist.csv'))
+histograms = list(histogram.glob('**/*.pcap.hist-filtered.csv'))
 for hist in histograms:
 
-    filname = hist.stem.replace('.hist', '.hist.cdf')
+    filname = hist.stem.replace('.hist-filtered', '.hist-filtered.cdf')
     #print(filname)
 
     with open(hist, newline='') as csvfile:

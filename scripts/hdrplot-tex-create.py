@@ -66,7 +66,7 @@ texaxis=r"""
                         log basis x={10},                                                                               
                         log basis y={10},                                                                               
                         ymin=10^0,                                                                                      
-                        ymax=10^2,                                                                                      
+                        ymax=10^5,                                                                                      
                         max space between ticks=20,                                                                     
                         yminorticks=true,                                                                               
                         xtick={1, 2, 10, 100, 1000, 10000, 100000, 1000000},                                            
@@ -96,10 +96,10 @@ addplot=r"""
                  ]"""
 
 # latency histogram
-hist = sorted(list(measurement_folder.glob('**/*.pcap.hist.cdf.csv')))
+hist = sorted(list(measurement_folder.glob('**/*.pcap.hist-filtered.cdf.csv')))
 for f in hist:
-    filname = f.stem.replace('.hist', '')
-    fhandle = open(plot_folder.joinpath(filname + '.hdrhist.tex'), 'w')
+    filname = f.stem.replace('.hist-filtered', '')
+    fhandle = open(plot_folder.joinpath(filname + '.hdrhist-filtered.tex'), 'w')
     fhandle.write(texheader)
     fhandle.write(texaxis)
     add = "{%s};" % (str(f))
